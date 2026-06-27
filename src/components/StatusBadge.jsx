@@ -1,9 +1,10 @@
 const statusMap = {
-  'New':         'badge-new',
-  'Contacted':   'badge-contacted',
-  'In Progress': 'badge-inprogress',
-  'Closed':      'badge-closed',
-  'Lost':        'badge-lost',
+  'New':           'badge-new',
+  'Contacted':     'badge-contacted',
+  'Follow Up':     'badge-followup',
+  'Proposal Sent': 'badge-proposalsent',
+  'Closed Won':    'badge-closedwon',
+  'Closed Lost':   'badge-closedlost',
 }
 
 export default function StatusBadge({ status }) {

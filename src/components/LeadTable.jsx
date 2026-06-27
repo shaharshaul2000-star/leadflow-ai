@@ -1,15 +1,13 @@
 import { useNavigate } from 'react-router-dom'
 import StatusBadge from './StatusBadge'
+import PriorityBadge from './PriorityBadge'
 
-const avatarColors = [
-  '#2563EB','#8B5CF6','#EC4899','#F59E0B',
-  '#10B981','#EF4444','#06B6D4','#84CC16',
-]
+const avatarColors = ['#2563EB','#8B5CF6','#EC4899','#F59E0B','#10B981','#EF4444','#06B6D4','#84CC16']
 
 function getColor(name) {
-  let hash = 0
-  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash)
-  return avatarColors[Math.abs(hash) % avatarColors.length]
+  let h = 0
+  for (let i = 0; i < name.length; i++) h = name.charCodeAt(i) + ((h << 5) - h)
+  return avatarColors[Math.abs(h) % avatarColors.length]
 }
 
 function getInitials(name) {
@@ -17,7 +15,18 @@ function getInitials(name) {
 }
 
 function formatDate(iso) {
-  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  return new Date(iso).toLocaleDateString('he-IL', { day: 'numeric', month: 'short' })
+}
+
+function FollowUpTag({ date }) {
+  if (!date) return <span className="followup-tag normal">—</span>
+  const today = new Date(); today.setHours(0,0,0,0)
+  const d = new Date(date)
+  const diff = Math.round((d - today) / 86_400_000)
+  if (diff < 0) return <span className="followup-tag overdue">⚠ {Math.abs(diff)}d overdue</span>
+  if (diff === 0) return <span className="followup-tag soon">🔔 Today</span>
+  if (diff <= 2)  return <span className="followup-tag soon">📅 {formatDate(date)}</span>
+  return <span className="followup-tag normal">📅 {formatDate(date)}</span>
 }
 
 export default function LeadTable({ leads }) {
@@ -28,8 +37,8 @@ export default function LeadTable({ leads }) {
       <div className="table-wrapper">
         <div className="table-empty">
           <div className="table-empty-icon">📋</div>
-          <p style={{ fontWeight: 600, marginBottom: '0.35rem' }}>No leads found</p>
-          <p>Try adjusting your search or add a new lead.</p>
+          <p style={{ fontWeight: 600, marginBottom: '0.35rem' }}>לא נמצאו לידים</p>
+          <p>נסה לשנות את הפילטר או הוסף ליד חדש.</p>
         </div>
       </div>
     )
@@ -40,48 +49,45 @@ export default function LeadTable({ leads }) {
       <table className="table">
         <thead>
           <tr>
-            <th>Lead</th>
-            <th>Status</th>
-            <th>Source</th>
-            <th>Added</th>
-            <th>Notes</th>
+            <th>ליד</th>
+            <th>סטטוס</th>
+            <th>עדיפות</th>
+            <th>מקור</th>
+            <th>מעקב הבא</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
-          {leads.map((lead) => {
-            const color = getColor(lead.fullName)
-            return (
-              <tr key={lead.id} onClick={() => navigate(`/lead/${lead.id}`)}>
-                <td>
-                  <div className="table-name-cell">
-                    <div className="table-avatar" style={{ background: color }}>
-                      {getInitials(lead.fullName)}
-                    </div>
-                    <div className="table-name-info">
-                      <span className="table-name-primary">{lead.fullName}</span>
-                      <span className="table-name-secondary">{lead.email}</span>
-                    </div>
+          {leads.map((lead) => (
+            <tr key={lead.id} onClick={() => navigate(`/lead/${lead.id}`)}>
+              <td>
+                <div className="table-name-cell">
+                  <div className="table-avatar" style={{ background: getColor(lead.fullName) }}>
+                    {getInitials(lead.fullName)}
                   </div>
-                </td>
-                <td><StatusBadge status={lead.status} /></td>
-                <td style={{ color: 'var(--text-muted)' }}>{lead.source}</td>
-                <td style={{ color: 'var(--text-muted)' }}>{formatDate(lead.createdAt)}</td>
-                <td style={{ color: 'var(--text-muted)' }}>
-                  {lead.notes?.length || 0} note{lead.notes?.length !== 1 ? 's' : ''}
-                </td>
-                <td>
-                  <button
-                    className="btn btn-ghost btn-sm"
-                    onClick={(e) => { e.stopPropagation(); navigate(`/lead/${lead.id}`) }}
-                    style={{ color: 'var(--primary)' }}
-                  >
-                    View →
-                  </button>
-                </td>
-              </tr>
-            )
-          })}
+                  <div className="table-name-info">
+                    <span className="table-name-primary">{lead.fullName}</span>
+                    <span className="table-name-secondary">
+                      {lead.businessName || lead.email}
+                    </span>
+                  </div>
+                </div>
+              </td>
+              <td><StatusBadge status={lead.status} /></td>
+              <td><PriorityBadge priority={lead.priority} /></td>
+              <td style={{ color: 'var(--text-muted)', fontSize: '0.82rem' }}>{lead.source}</td>
+              <td><FollowUpTag date={lead.nextFollowUpDate} /></td>
+              <td>
+                <button
+                  className="btn btn-ghost btn-sm"
+                  onClick={(e) => { e.stopPropagation(); navigate(`/lead/${lead.id}`) }}
+                  style={{ color: 'var(--primary)' }}
+                >
+                  פרטים →
+                </button>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>

@@ -1,80 +1,116 @@
 # LeadFlow AI
 
-A modern, lightweight CRM for small businesses. Track leads, log notes, manage your pipeline, and get AI-powered next-step suggestions — all in one clean interface.
+A modern CRM for small businesses built with React + Vite. Manage leads, track activity, send WhatsApp messages, and get AI-powered next-step suggestions — all from the browser with no backend required.
+
+---
+
+## Features
+
+- **Dashboard** — 6 KPI stat cards (Total, New, In Progress, Follow Up, Closed Won, Conversion Rate) + Leads by Source bar chart
+- **Lead Pipeline** — 6 statuses: New → Contacted → Follow Up → Proposal Sent → Closed Won / Closed Lost
+- **Priority System** — High / Medium / Low with visual badges
+- **Search & Filters** — real-time search by name/phone/email/business + status/source/priority dropdowns
+- **Lead Details** — inline edit of status, priority and follow-up date; WhatsApp button; copy-to-clipboard
+- **Activity Timeline** — log notes with action type: Call / WhatsApp / Meeting / General
+- **AI Lead Assistant** — rule-based Hebrew suggestions based on status × priority
+- **WhatsApp Templates** — 3 ready-to-send message templates with `{name}` substitution → wa.me deep links
+- **Responsive UI** — works on mobile, tablet and desktop
+- **LocalStorage** — zero-backend, data persists in the browser; structured for easy Supabase migration
+
+---
 
 ## Tech Stack
 
-| Layer      | Technology                            |
-|------------|---------------------------------------|
-| Frontend   | React 18 + Vite                       |
-| Routing    | React Router v6                       |
-| Styling    | Pure CSS with CSS Custom Properties   |
-| Data       | LocalStorage (Supabase-ready)         |
-| AI (demo)  | Rule-based suggestions (OpenAI-ready) |
-| Deployment | Vercel                                |
+| Layer     | Technology                    |
+|-----------|-------------------------------|
+| UI        | React 18 + Vite 5             |
+| Routing   | React Router v6               |
+| Styling   | Pure CSS (CSS Custom Properties) — no UI library |
+| State     | React useState / useEffect / useMemo |
+| Storage   | LocalStorage (abstracted via `src/services/leadService.js`) |
+| AI        | Rule-based engine (`src/utils/ai.js`) |
+| WhatsApp  | wa.me deep link builder (`src/utils/whatsapp.js`) |
+
+---
 
 ## Getting Started
 
 ```bash
-# 1. Install dependencies
+# 1. Clone
+git clone https://github.com/shaharshaul2000-star/leadflow-ai.git
+cd leadflow-ai
+
+# 2. Install
 npm install
 
-# 2. Start the development server
+# 3. Run (dev)
 npm run dev
+
+# 4. Open
+# http://localhost:5173
 ```
 
-The app will be available at `http://localhost:5173`.
-
-## Build for Production
-
-```bash
-npm run build
-npm run preview
-```
+---
 
 ## Project Structure
 
 ```
-src/
-├── components/
-│   ├── Navbar.jsx        # Global navigation bar
-│   ├── Footer.jsx        # Global footer
-│   ├── LeadCard.jsx      # Card view for a single lead
-│   ├── LeadTable.jsx     # Table view for leads list
-│   ├── LeadForm.jsx      # Add lead form with validation
-│   ├── StatCard.jsx      # Dashboard stat card
-│   └── StatusBadge.jsx   # Colored status pill
-├── pages/
-│   ├── Home.jsx          # Landing / marketing page
-│   ├── Login.jsx         # Sign in page
-│   ├── Register.jsx      # Sign up page
-│   ├── Dashboard.jsx     # Main dashboard with stats & table
-│   ├── AddLead.jsx       # Add new lead page
-│   └── LeadDetails.jsx   # Lead detail, notes, AI suggestion
-├── styles/
-│   └── globals.css       # Design system + all component styles
-├── utils/
-│   ├── storage.js        # LocalStorage CRUD helpers
-│   └── ai.js             # AI suggestion logic (demo)
-├── App.jsx               # Router configuration
-└── main.jsx              # React entry point
+leadflow-ai/
+├── src/
+│   ├── pages/
+│   │   ├── Home.jsx           # Landing page
+│   │   ├── Login.jsx          # Auth page (UI only)
+│   │   ├── Register.jsx       # Auth page (UI only)
+│   │   ├── Dashboard.jsx      # KPIs + chart + filters + table
+│   │   ├── AddLead.jsx        # New lead form
+│   │   └── LeadDetails.jsx    # Full lead profile + timeline + AI
+│   ├── components/
+│   │   ├── Navbar.jsx
+│   │   ├── Footer.jsx
+│   │   ├── StatCard.jsx
+│   │   ├── LeadTable.jsx
+│   │   ├── LeadForm.jsx
+│   │   ├── StatusBadge.jsx
+│   │   ├── PriorityBadge.jsx
+│   │   └── ActivityTimeline.jsx
+│   ├── services/
+│   │   └── leadService.js     # Abstraction layer — swap for Supabase here
+│   ├── utils/
+│   │   ├── storage.js         # LocalStorage CRUD + seeding
+│   │   ├── ai.js              # Rule-based AI suggestions (Hebrew)
+│   │   └── whatsapp.js        # Phone formatting + wa.me URL builder
+│   └── styles/
+│       └── globals.css
+├── DATA_MODEL.md              # Entity schema + ERD + future Supabase SQL
+├── DESIGN.md                  # Design system documentation
+└── README.md
 ```
 
-## Features
+---
 
-- **Dashboard** — Stats overview (total, new, in-progress, closed) + searchable/filterable leads table
-- **Add Lead** — Full form with validation, lead source & status selection
-- **Lead Details** — View contact info, update status, add timestamped notes, delete lead
-- **AI Suggestions** — Click "Get AI Suggestion" on any lead for a personalized next-step recommendation
-- **Search & Filter** — Real-time search by name/email + filter by status
-- **Responsive** — Works on desktop, tablet, and mobile
+## Demo Seed Data
 
-## Future Roadmap
+On first load, 6 Hebrew leads are seeded automatically across different statuses and sources so you can explore all features immediately.
 
-- [ ] Supabase integration (real auth + database)
-- [ ] OpenAI API for real AI suggestions
-- [ ] Email reminders for follow-ups
-- [ ] Lead import via CSV
-- [ ] Team collaboration / multi-user
-- [ ] Analytics & conversion charts
-- [ ] Vercel deployment + custom domain
+---
+
+## Roadmap
+
+| Feature                  | Status      |
+|--------------------------|-------------|
+| LocalStorage persistence | ✅ Done     |
+| AI suggestions (local)   | ✅ Done     |
+| WhatsApp deep links      | ✅ Done     |
+| Supabase backend         | 🔜 Planned  |
+| Real-time sync           | 🔜 Planned  |
+| OpenAI GPT suggestions   | 🔜 Planned  |
+| WhatsApp Business API    | 🔜 Planned  |
+| Email integration        | 🔜 Planned  |
+| Multi-user / auth        | 🔜 Planned  |
+| Export to CSV            | 🔜 Planned  |
+
+---
+
+## License
+
+MIT
