@@ -46,18 +46,25 @@ const colorMap = {
   conversion: { bg: '#ECFEFF', color: '#0891B2' },
 }
 
-export default function StatCard({ label, value, sub, type = 'total' }) {
+export default function StatCard({ label, value, sub, type = 'total', onClick, active = false }) {
   const { bg, color } = colorMap[type] || colorMap.total
   return (
-    <div className="stat-card">
+    <div
+      className={`stat-card${onClick ? ' stat-card-clickable' : ''}${active ? ' stat-card-active' : ''}`}
+      onClick={onClick}
+      style={active ? { borderColor: color, boxShadow: `0 0 0 3px ${color}22` } : undefined}
+    >
       <div className="stat-icon" style={{ background: bg, color }}>
         {iconMap[type] || iconMap.total}
       </div>
       <div className="stat-body">
         <div className="stat-label">{label}</div>
-        <div className="stat-value">{value}</div>
+        <div className="stat-value" style={active ? { color } : undefined}>{value}</div>
         {sub && <div className="stat-sub">{sub}</div>}
       </div>
+      {active && (
+        <div className="stat-active-dot" style={{ background: color }} />
+      )}
     </div>
   )
 }

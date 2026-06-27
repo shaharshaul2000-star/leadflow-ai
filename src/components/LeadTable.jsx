@@ -29,16 +29,25 @@ function FollowUpTag({ date }) {
   return <span className="followup-tag normal">📅 {formatDate(date)}</span>
 }
 
-export default function LeadTable({ leads }) {
+export default function LeadTable({ leads, onClear, hasFilters = false }) {
   const navigate = useNavigate()
 
   if (!leads || leads.length === 0) {
     return (
       <div className="table-wrapper">
         <div className="table-empty">
-          <div className="table-empty-icon">📋</div>
-          <p style={{ fontWeight: 600, marginBottom: '0.35rem' }}>לא נמצאו לידים</p>
-          <p>נסה לשנות את הפילטר או הוסף ליד חדש.</p>
+          <div className="table-empty-icon">🔍</div>
+          <p style={{ fontWeight: 700, marginBottom: '0.35rem', color: 'var(--text)' }}>
+            {hasFilters ? 'לא נמצאו לידים תואמים' : 'אין לידים עדיין'}
+          </p>
+          <p style={{ marginBottom: hasFilters ? '1rem' : 0 }}>
+            {hasFilters ? 'נסה לשנות את הפילטרים או לחפש מחרוזת אחרת.' : 'הוסף ליד ראשון כדי להתחיל לעקוב.'}
+          </p>
+          {hasFilters && onClear && (
+            <button className="btn btn-secondary btn-sm" onClick={onClear}>
+              ✕ נקה פילטרים
+            </button>
+          )}
         </div>
       </div>
     )
